@@ -130,7 +130,7 @@ QString QgsPathResolver::readPath( const QString &f ) const
     }
     else
     {
-      return vsiPrefix + fi.canonicalFilePath();
+      return vsiPrefix + QDir::cleanPath(fi.absoluteFilePath());
     }
   }
 
@@ -297,7 +297,8 @@ QString QgsPathResolver::writePath( const QString &s ) const
     return srcPath;
   }
   if ( srcFileInfo.exists() )
-    srcPath = srcFileInfo.canonicalFilePath();
+    // Do NOT resolve symlinks, but do remove '..' and '.'
+    srcPath = QDir::cleanPath(srcFileInfo.absoluteFilePath());
 
   // if this is a VSIFILE, remove the VSI prefix and append to final result
   const QString vsiPrefix = QgsGdalUtils::vsiPrefixForPath( src );
