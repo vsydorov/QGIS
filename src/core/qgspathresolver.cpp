@@ -290,6 +290,12 @@ QString QgsPathResolver::writePath( const QString &s ) const
   }
 
   const QFileInfo srcFileInfo( srcPath );
+  // Guard against relative paths: If srcPath is already relative, QFileInfo will match
+  // files in the working directory, instead of project directory. Avoid by returning early.
+  if ( !srcFileInfo.isAbsolute() )
+  {
+    return srcPath;
+  }
   if ( srcFileInfo.exists() )
     srcPath = srcFileInfo.canonicalFilePath();
 
